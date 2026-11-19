@@ -11,7 +11,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 
 public class FuelSimulation {
 
-    
+    // =========================================================
+    // CONFIGURAÇÕES
+    // =========================================================
 
     private static final double FUEL_RADIUS = 0.15;
 
@@ -32,8 +34,9 @@ public class FuelSimulation {
     private static final double GRAVITY = 9.81;
     private static final double LAUNCH_SPEED = 4.0;
 
-
-
+    // =========================================================
+    // FUELS
+    // =========================================================
 
     private final List<Fuel> fuels = new ArrayList<>();
 
@@ -76,8 +79,9 @@ public class FuelSimulation {
         fuels.add(new Fuel(x, y));
     }
 
-
-
+    // =========================================================
+    // UPDATE
+    // =========================================================
 
     public void update(
             Pose2d robotPose,
@@ -108,7 +112,9 @@ public class FuelSimulation {
         logFuels();
     }
 
-
+    // =========================================================
+    // INTAKE
+    // =========================================================
 
     private void checkIntakeCollection(
             Fuel fuel,
@@ -173,7 +179,9 @@ public class FuelSimulation {
         return insideIntake;
     }
 
-
+    // =========================================================
+    // COLISÃO ROBÔ X FUEL
+    // =========================================================
 
     private void checkRobotCollision(
             Fuel fuel,
@@ -227,11 +235,14 @@ public class FuelSimulation {
         fuel.y += normalY * penetration;
     }
 
-    
-
+    // =========================================================
+    // FÍSICA
+    // =========================================================
 
     private void updateFuelPhysics(Fuel fuel, Pose2d robotPose, double dt) {
-     
+        // ---------------------------------------------------------
+        // Fuel arremessada
+        // ---------------------------------------------------------
 
         if (fuel.launched) {
             fuel.velocityZ -= GRAVITY * dt;
@@ -249,6 +260,9 @@ public class FuelSimulation {
             return;
         }
 
+        // ---------------------------------------------------------
+        // Fuel no Hand
+        // ---------------------------------------------------------
 
         if (fuel.handCollected) {
             Pose3d handCenter = SimHand.getWheelCenter();
@@ -258,14 +272,19 @@ public class FuelSimulation {
             return;
         }
 
-      
+        // ---------------------------------------------------------
+        // Fuel armazenada dentro do robô
+        // ---------------------------------------------------------
+
         if (fuel.collected) {
             setFuelRelativeToRobot(fuel, robotPose, 0.0, 0.0, 0.30);
 
             return;
         }
 
-       
+        // ---------------------------------------------------------
+        // Fuel sendo puxada pelo Intake
+        // ---------------------------------------------------------
 
         if (fuel.beingCollected) {
             fuel.collectionX = moveTowards(fuel.collectionX, 0.0, INTAKE_SPEED * dt);
@@ -285,7 +304,9 @@ public class FuelSimulation {
             return;
         }
 
-
+        // ---------------------------------------------------------
+        // Fuel livre no chão
+        // ---------------------------------------------------------
 
         double resistance = Math.exp(-FRICTION * dt);
 
@@ -303,8 +324,9 @@ public class FuelSimulation {
         fuel.z = FUEL_RADIUS;
     }
 
-
-
+    // =========================================================
+    // HAND
+    // =========================================================
 
     private void checkHandCollection(Fuel fuel, Pose2d robotPose) {
         if (!fuel.collected || fuel.handCollected) {
@@ -332,8 +354,9 @@ public class FuelSimulation {
         return distance <= HAND_CAPTURE_DISTANCE;
     }
 
-   
-  
+    // =========================================================
+    // LANÇAMENTO
+    // =========================================================
 
     public void deposit(Pose2d robotPose) {
 
@@ -371,7 +394,9 @@ public class FuelSimulation {
         }
     }
 
- 
+    // =========================================================
+    // ESTADOS
+    // =========================================================
 
     public boolean isHandCollected() {
         for (Fuel fuel : fuels) {
@@ -393,8 +418,9 @@ public class FuelSimulation {
         return false;
     }
 
-  
-
+    // =========================================================
+    // TRANSFORMAÇÕES
+    // =========================================================
 
     private double[] getFuelRelativeToRobot(Fuel fuel, Pose2d robotPose) {
         double deltaX = fuel.x - robotPose.getX();
@@ -425,8 +451,9 @@ public class FuelSimulation {
         fuel.z = relativeZ;
     }
 
-    
-
+    // =========================================================
+    // UTILIDADES
+    // =========================================================
 
     private double moveTowards(double current, double target, double maxDelta) {
         double difference = target - current;
@@ -438,7 +465,9 @@ public class FuelSimulation {
         return current + Math.copySign(maxDelta, difference);
     }
 
-  
+    // =========================================================
+    // ADVANTAGESCOPE
+    // =========================================================
 
     private void logFuels() {
         Pose3d[] fuelPoses = new Pose3d[fuels.size()];

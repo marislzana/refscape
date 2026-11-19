@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
@@ -12,8 +11,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SimElevator extends SubsystemBase {
-   
+
+    // =========================================================
     // CONFIGURAÇÕES
+    // =========================================================
 
     // Limites físicos do elevador no CAD, em metros.
     private static final double ELEVATOR_ZERO = 0.0;
@@ -23,32 +24,39 @@ public class SimElevator extends SubsystemBase {
     private static final double ENCODER_ZERO = 0.0;
     private static double encoderUp = 1000.0;
 
-    
+    // =========================================================
     // CONTROLE
- 
+    // =========================================================
+
     private final PIDController elevatorPID = new PIDController(1.5, 0.0, 0.0);
 
     // Posições internas da simulação, em metros.
     private static double currentPosition = 0.0;
     private static double setPosition = 0.0;
 
+    // =========================================================
     // CONSTRUTOR
-
+    // =========================================================
 
     public SimElevator(double realUp, double kP) {
         encoderUp = realUp;
         elevatorPID.setP(kP);
     }
-  
+
+    // =========================================================
     // PERIODIC
- 
+    // =========================================================
+
+    @Override
     public void periodic() {
         updatePosition();
         updateVisualization();
     }
 
+    // =========================================================
     // POSIÇÃO
-    
+    // =========================================================
+
     /**
      * Define a posição desejada do elevador usando a escala do encoder.
      */
@@ -78,13 +86,17 @@ public class SimElevator extends SubsystemBase {
         currentPosition = MathUtil.clamp(currentPosition, ELEVATOR_ZERO, ELEVATOR_UP);
     }
 
+    // =========================================================
     // COMMANDS
+    // =========================================================
 
     public Command CMDsetPosition(double position, double kP) {
         return Commands.runOnce(() -> setPosition(position, kP));
     }
 
+    // =========================================================
     // VISUALIZAÇÃO
+    // =========================================================
 
     private void updateVisualization() {
         Logger.recordOutput("SubSystemSim/Elevator", new Pose3d[] {
@@ -93,7 +105,9 @@ public class SimElevator extends SubsystemBase {
         Logger.recordOutput("SubSystemSim/Elevator/getPosition", getRealPosition());
     }
 
+    // =========================================================
     // UTILIDADES
+    // =========================================================
 
     /**
      * Converte linearmente um valor de uma escala para outra.

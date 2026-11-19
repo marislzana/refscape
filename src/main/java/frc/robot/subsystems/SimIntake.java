@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SimIntake extends SubsystemBase {
 
- 
+    // =========================================================
+    // CONFIGURAÇÕES
     // =========================================================
 
     // Posição física do Intake no CAD, em metros.
@@ -27,6 +28,8 @@ public class SimIntake extends SubsystemBase {
     private static double encoderForward = 50.0;
 
     // =========================================================
+    // CONTROLE
+    // =========================================================
 
     private final PIDController positionPID = new PIDController(1.5, 0.0, 0.0);
     private final PIDController velocityPID = new PIDController(1.5, 0.0, 0.0);
@@ -40,7 +43,8 @@ public class SimIntake extends SubsystemBase {
     // Rotação visual do rolete no AdvantageScope.
     private static double rollerRotation = 0.0;
 
- 
+    // =========================================================
+    // CONSTRUTOR
     // =========================================================
 
     public SimIntake(
@@ -54,6 +58,8 @@ public class SimIntake extends SubsystemBase {
     }
 
     // =========================================================
+    // PERIODIC
+    // =========================================================
 
     @Override
     public void periodic() {
@@ -62,6 +68,8 @@ public class SimIntake extends SubsystemBase {
         updateVisualization();
     }
 
+    // =========================================================
+    // POSIÇÃO
     // =========================================================
 
     /**
@@ -94,7 +102,8 @@ public class SimIntake extends SubsystemBase {
         currentPosition = MathUtil.clamp(currentPosition, INTAKE_ZERO, INTAKE_FORWARD);
     }
 
-    // =========================================================
+   
+
     /**
      * Define a velocidade desejada do rolete do Intake.
      */
@@ -109,7 +118,9 @@ public class SimIntake extends SubsystemBase {
         return currentVelocity;
     }
 
-    
+    /**
+     * Indica se o rolete do Intake está em movimento.
+     */
     public static boolean isRunning() {
         return Math.abs(currentVelocity) > 0.05;
     }
@@ -119,29 +130,26 @@ public class SimIntake extends SubsystemBase {
 
         currentVelocity += output * 0.02;
 
+        // Atualiza somente a representação visual do rolete.
         rollerRotation += 0.1 * currentVelocity;
         rollerRotation = MathUtil.inputModulus(rollerRotation, -Math.PI, Math.PI);
     }
 
-   
-    // =========================================================
 
     public Command CMDintakeOn() {
         return Commands.sequence(
-                Commands.runOnce(() -> setPosition(20, 3)),     
-                Commands.waitUntil(() -> getRealPosition() > 15),           
-                Commands.runOnce(() -> setVelocity(-3)));                   
+                Commands.runOnce(() -> setPosition(20, 3)),     // Avança o Intake.
+                Commands.waitUntil(() -> getRealPosition() > 15),           // Aguarda o mecanismo avançar.
+                Commands.runOnce(() -> setVelocity(-3)));                   // Liga o rolete.
     }
 
     public Command CMDintakeOff() {
         return Commands.sequence(
-                Commands.runOnce(() -> setPosition(0, 3)),  
-                Commands.waitUntil(() -> getRealPosition() <= 15),      
-                Commands.runOnce(() -> setVelocity(0)));       
+                Commands.runOnce(() -> setPosition(0, 3)),  // Recolhe o Intake.
+                Commands.waitUntil(() -> getRealPosition() <= 15),      // Aguarda o mecanismo recolher.
+                Commands.runOnce(() -> setVelocity(0)));       // Desliga o rolete.
     }
 
-
-    // =========================================================
 
     private void updateVisualization() {
         double intakeCO = currentPosition * Math.sin(Math.toRadians(INTAKE_ANGLE));
@@ -156,10 +164,9 @@ public class SimIntake extends SubsystemBase {
                 new Pose3d(intakeCA + 0.336804, 0.0, -intakeCO + 0.238576, new Rotation3d(0.0, rollerRotation, 0.0)) });
     }
 
+  
 
-    // =========================================================
-
-
+  
     private static double map(double value, double inputMin, double inputMax, double outputMin, double outputMax) {
         return (value - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
     }

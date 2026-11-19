@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SimHand extends SubsystemBase {
 
+    // =========================================================
     // CONFIGURAÇÕES
+    // =========================================================
 
     // Limites físicos da articulação no CAD, em radianos.
     private static final double HAND_MIN_ANGLE = -Math.PI;
@@ -30,8 +32,9 @@ public class SimHand extends SubsystemBase {
     private static final double HAND_HEIGHT = 1.032257;
     private static final double HAND_X = -0.162433;
 
+    // =========================================================
     // CONTROLE
-   
+    // =========================================================
 
     private final PIDController anglePID = new PIDController(1.5, 0.0, 0.0);
 
@@ -46,8 +49,9 @@ public class SimHand extends SubsystemBase {
     // Rotação visual dos roletes.
     private static double rollerRotation = 0.0;
 
+    // =========================================================
     // CONSTRUTOR
- 
+    // =========================================================
 
     public SimHand(
             double articulationMin,
@@ -64,7 +68,9 @@ public class SimHand extends SubsystemBase {
         anglePID.enableContinuousInput(-Math.PI, Math.PI);
     }
 
+    // =========================================================
     // PERIODIC
+    // =========================================================
 
     @Override
     public void periodic() {
@@ -73,8 +79,10 @@ public class SimHand extends SubsystemBase {
         updateVisualization();
     }
 
+    // =========================================================
     // ARTICULAÇÃO
-   
+    // =========================================================
+
     /**
      * Define o ângulo desejado usando a escala do encoder real.
      */
@@ -109,8 +117,9 @@ public class SimHand extends SubsystemBase {
         currentAngle = MathUtil.inputModulus(currentAngle, -Math.PI, Math.PI);
     }
 
+    // =========================================================
     // VELOCIDADE DOS ROLETES
-  
+    // =========================================================
 
     /**
      * Define a velocidade desejada dos roletes do Hand.
@@ -140,9 +149,9 @@ public class SimHand extends SubsystemBase {
         rollerRotation = MathUtil.inputModulus(rollerRotation, -Math.PI, Math.PI);
     }
 
-
+    // =========================================================
     // GEOMETRIA DO HAND
-
+    // =========================================================
 
     /**
      * Calcula a posição da roda 1 em relação ao robô.
@@ -185,8 +194,9 @@ public class SimHand extends SubsystemBase {
         return new Pose3d(centerX, centerY, centerZ, new Rotation3d());
     }
 
+    // =========================================================
     // LANÇAMENTO
-    
+    // =========================================================
 
     /**
      * Retorna a direção de lançamento da Fuel no referencial do robô.
@@ -205,8 +215,9 @@ public class SimHand extends SubsystemBase {
         };
     }
 
+    // =========================================================
     // VISUALIZAÇÃO
-
+    // =========================================================
 
     private void updateVisualization() {
         Pose3d wheel1 = getWheel1Pose();
@@ -224,8 +235,10 @@ public class SimHand extends SubsystemBase {
         Logger.recordOutput("SubSystemSim/Hand/SetAngle", Math.toDegrees(setAngle));
     }
 
+    // =========================================================
     // UTILIDADES
-  
+    // =========================================================
+
     /**
      * Converte linearmente um valor de uma escala para outra.
      */
